@@ -90,10 +90,24 @@ screen.text('EFGH', 0, 8, 1)
 screen.show()
 ```
 
+## Marquee
+Display a scrolling text from right to left. Useful for _long_ texts.
+```python
+
+from machine import Pin, SPI
+import max7219
+
+spi = SPI(1, baudrate=10000000)
+screen = max7219.Max7219(32, 8, spi, Pin(15))
+screen.marquee('This is a long text')
+screen.marquee('This is a long text going faster', speed=0.03)
+```
+
 # Credits
 
 This library is based on:
 
+- [micropython-max7219](https://github.com/vrialland/micropython-max7219) by [vrialland](https://github.com/vrialland)
 - [Official Micropython SSD1306 driver](https://github.com/micropython/micropython/blob/master/drivers/display/ssd1306.py)
 - [micropython-max7219](https://github.com/mcauser/micropython-max7219) by [mcauser](https://github.com/mcauser)
 - [Redgick GFX](https://github.com/redgick/Redgick_GFX/tree/master/Redgick_MatrixMAX72XX) by [jlebunetel](https://github.com/jlebunetel)

@@ -1,6 +1,7 @@
 from machine import Pin
 from micropython import const
 import framebuf
+from time import sleep
 
 _DIGIT_0 = const(0x1)
 
@@ -21,6 +22,7 @@ _DISPLAY_TEST = const(0xF)
 _DISPLAY_TEST_NORMAL_OPERATION = const(0x0)
 
 _MATRIX_SIZE = const(8)
+_CHAR_WIDTH = const(8)
 
 
 class Max7219(framebuf.FrameBuffer):
@@ -69,7 +71,7 @@ class Max7219(framebuf.FrameBuffer):
         """Write command on SPI"""
         cmd = bytearray([command, data])
         self.cs(0)
-        for matrix in range(self.nb_matrices):
+        for _ in range(self.nb_matrices):
             self.spi.write(cmd)
         self.cs(1)
 
@@ -114,3 +116,16 @@ class Max7219(framebuf.FrameBuffer):
                 self.spi.write(bytearray([_DIGIT_0 + line, self.buffer[index]]))
 
             self.cs(1)
+
+    def marquee(self, msg, speed=0.1, stay=False):
+        """Display scrolling text from right to left"""
+        len_msg = len(msg)
+        for x in range(self.width, -len_msg * _CHAR_WIDTH, -1):
+            self.text(msg, x, 0, 1)
+            self.show()
+            sleep(speed)
+            self.fill(0)
+
+        if stay:
+            self.text(msg, 0, 0, 1)
+            self.show()
