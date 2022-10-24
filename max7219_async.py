@@ -2,6 +2,7 @@ from machine import Pin
 from micropython import const
 import framebuf
 import uasyncio as asyncio
+from time import sleep_ms
 
 _DIGIT_0 = const(0x1)
 
@@ -130,6 +131,20 @@ class Max7219(framebuf.FrameBuffer):
                 self.show()
                 await asyncio.sleep_ms(hold_ms)
                 self.fill(0)
+
+        if stay:
+            self.text(msg, 0, 0, 1)
+            self.show()
+
+    def marquee_sync(self, msg, hold_ms=100, stay=False):
+        """Display scrolling text from right to left"""
+        len_msg = len(msg)
+
+        for x in range(self.width, -len_msg * _CHAR_WIDTH, -1):
+            self.text(msg, x, 0, 1)
+            self.show()
+            sleep_ms(hold_ms)
+            self.fill(0)
 
         if stay:
             self.text(msg, 0, 0, 1)
